@@ -5,15 +5,15 @@ import TopNavigation from "../components/TopNavigation"
 import React from 'react'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import { Provider, Context } from '../context';
 
 function MyApp({ Component, pageProps }) {
     return (
-        <>
-            <ToastContainer position="top-center"/>
+        <Provider>
+            <ToastContainer position="top-center" />
             <TopNavigation />
             <Component {...pageProps} />
-        </>
+        </Provider>
     )
 }
 
