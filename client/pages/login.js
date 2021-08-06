@@ -3,9 +3,9 @@ import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import { SyncOutlined } from "@ant-design/icons";
 import Link from 'next/link';
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { Context } from '../context'
-import {useRouter} from 'next/router';
+import { useRouter } from 'next/router';
 
 
 const Login = () => {
@@ -17,9 +17,15 @@ const Login = () => {
 
     //GLOBAL STATE
     const { state, dispatch } = useContext(Context);
-
+    const { user } = state;
 
     const router = useRouter();
+
+    useEffect(() => {
+            if (user) {
+                router.push('/')
+        }
+    }, [user])
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -33,7 +39,7 @@ const Login = () => {
             //save userData in local storage, to avoid data lost after refreshing!
             window.localStorage.setItem('currentUser', JSON.stringify(data));
             setLoading(false)
-            toast.success('registration succefull, please login')
+            toast.success("You've been succeffully signin")
             router.push('/');
 
         } catch (err) {
