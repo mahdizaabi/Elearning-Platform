@@ -8,7 +8,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import SubMenu from "antd/lib/menu/SubMenu";
-const { Item } = Menu;
+const { Item, ItemGroup } = Menu;
 
 const TopNavigation = () => {
 
@@ -65,15 +65,18 @@ const TopNavigation = () => {
             </>}
 
             {user &&
-                <SubMenu key="submenu" icon={<CoffeeOutlined />} title={user?.name} className="float-right">
+                <SubMenu key="submenu" icon={<CoffeeOutlined />} title={user?.name}>
+                    <ItemGroup>
+                        <Item key="/user">
+                            <Link href="/user">
+                                <a>Dashboard</a>
+                            </Link>
+                        </Item>
+                        <Item onClick={() => logout()}>
+                            <a>Logout</a>
+                        </Item>
+                    </ItemGroup>
 
-                    <Item onClick={() => logout()} icon={<LogoutOutlined />}>
-                        <a>avatart</a>
-                    </Item>
-
-                    <Item onClick={() => logout()} icon={<LogoutOutlined />}>
-                        <a>Logout</a>
-                    </Item>
                 </SubMenu>
 
             }
