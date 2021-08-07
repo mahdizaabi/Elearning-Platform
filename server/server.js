@@ -2,6 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
 const morgan = require('morgan');
+require("dotenv").config();
+
 import csrf from "csurf";
 
 import cookieParser from 'cookie-parser'
