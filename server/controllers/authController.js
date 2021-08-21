@@ -1,7 +1,9 @@
 import userModel from '../models/user'
 import { hashPassword, comparePassword } from '../utils/auth';
 import jwt from 'jsonwebtoken';
+import { sendMail } from '../utils/sendmail';
 
+import { nanoid } from 'nanoid';
 
 export const register = async (req, res) => {
     const { name, email, password } = req.body;
@@ -72,5 +74,65 @@ export const currentUser = async (req, res) => {
         return res.json({ ok: true })
     } catch (e) {
         console.log(e)
+        return res.status(404).json({ error: e.message })
     }
+}
+
+export const checkCode = async (req, res) => {
+    const { code } = req.body;
+    try {
+        const user = await userModel.findOneAndUpdate({ passwordResetCode: code }, { passwordResetCode: "" })
+        if (user) {
+
+            return res.status(200).json({ "email": user.email });
+
+        } else {
+            throw new Error();
+        }
+    } catch (e) {
+        return res.status(400).json({ error: "Invalid code, please retry" })
+    }
+}
+
+
+
+
+export const forgotPassword = async (req, res) => {
+    const { email } = req.body;
+    if (!email)
+        return res.status(400).json({ error: "user not found" });
+
+    const shortCode = nanoid().toUpperCase();
+    let user;
+    try {
+        const user = await userModel.findOneAndUpdate({ email }, { passwordResetCode: shortCode }).exec()
+        if (!user) {
+            return res.status(400).json({ error: "user not found, wrong email" })
+        }
+        console.log("sending email")
+        sendMail(shortCode, email);
+        return res.send({ code: true })
+    } catch (error) {
+        return res.status(400).json({ error })
+
+    }
+}
+
+/* Verify code and reset password */
+export const resetPassword = async (req, res) => {
+    const { code, newPassword } = req.body;
+    try {
+
+        const user = await userModel.findOneAndUpdate({ passwordResetCode:code }, { passwordResetCode: "" })
+        if(!user) {
+            return res.status(400).json("invalid reset code");
+        }
+
+        const hashedPassword = await hashPassword(newPassword)
+        const updatedUserPassword = await userModel.findOneAndUpdate({email: user.email  }, { password: hashedPassword })
+        return res.status(200).json({ updatedUserPassword })
+    } catch (e) {
+        return res.status(400).json({ e });
+    }
+
 }
