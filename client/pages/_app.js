@@ -8,6 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Provider, Context } from '../context';
 
 function MyApp({ Component, pageProps }) {
+    console.log("_app is rendering now")
     return (
         <Provider>
             <ToastContainer position="top-center" />

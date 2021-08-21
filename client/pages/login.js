@@ -21,6 +21,7 @@ const Login = () => {
 
     const router = useRouter();
 
+    //toprevent an authenticated user from accessing the login page
     useEffect(() => {
             if (user) {
                 router.push('/')
@@ -40,7 +41,7 @@ const Login = () => {
             window.localStorage.setItem('currentUser', JSON.stringify(data));
             setLoading(false)
             toast.success("You've been succeffully signin")
-            router.push('/');
+            router.push('/user');
 
         } catch (err) {
             toast.error(err.response.data);
@@ -86,7 +87,18 @@ const Login = () => {
                         <a>Register</a>
                     </Link>
                 </p>
+
+                <p className="text-center">
+                   forgot password ?
+                    <Link href="/reset-password">
+                        <a className="text-danger">reset password</a>
+                    </Link>
+                </p>
+
+
             </div>
+
+            
         </>
     )
 }
