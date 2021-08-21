@@ -8,8 +8,10 @@ import csrf from "csurf";
 
 import cookieParser from 'cookie-parser'
 
-
+/*  ROUTES  */
 const authRoute = require('./routes/auth');
+const InstructorRoute = require('./routes/auth');
+
 const csrfProtection = csrf({ cookie: true })
 
 require('dotenv').config();
@@ -25,24 +27,23 @@ mongoose.connect(process.env.DATABASE, {
     useUnifiedTopology: true,
     useCreateIndex: true
 }).then(() => console.log('db cnnected')).catch(e => console.log(e))
-
 app.use(cors());
 app.use(express.json());
-
 app.use(cookieParser())
 app.use(morgan("dev"));
-app.use((req, res, next) => {
-    console.log("middleware is executed")
-    next()
-})
-//routes:
+
+
+
+//routes: 
 app.use('/api', authRoute);
 
-//csrf
-app.use(csrfProtection)
+
+app.use(csrfProtection);
+
 
 
 app.get('/api/csrf-token', (req, res) => {
+    console.log("csrf generated");
     res.json({ csrfToken: req.csrfToken() })
 })
 const port = process.env.PORT || 8000;
