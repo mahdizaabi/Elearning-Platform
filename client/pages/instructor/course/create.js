@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Resizer from 'react-image-file-resizer';
 import { toast } from 'react-toastify';
 import axios from 'axios';
-
+import deleteBlob from '../../../utils/Azure_delete_blob'
 const CourseCreate = () => {
 
     const [preview, setPreview] = useState("");
@@ -18,29 +18,39 @@ const CourseCreate = () => {
         uploading: '',
         paid: true,
         loading: false,
-        imagePreview: ''
     })
- 
+
     const handleChange = e => {
         setCourse({ ...course, [e.target.name]: e.target.value })
     }
-
-
     const handleImage = (e) => {
+
         let file = e.target.files[0]
-        setPreview(window.URL.createObjectURL(file));
-        setUploadButtonText(file.name);
+        if (preview) {
+            URL.revokeObjectURL(file);
+        }
+        let imagePreview = window.URL.createObjectURL(file);
+        // console.log(previewImageName);
+        //setPreview(previewImageName);
+        //setUploadButtonText(file.name);
         setCourse({ ...course, loading: true })
-        Resizer.imageFileResizer(file, 700, 500, "JPEG", 100, 0, async (imageUri) => {
+        Resizer.imageFileResizer(file, 700, 500, "JPEG", 100, 0, async (Base64ResizedImage) => {
             try {
                 setCourse({ ...course, loading: true })
                 let { data } = await axios.post('/api/course/upload-image', {
-                    image: imageUri
+                    image: Base64ResizedImage
                 })
-                console.log(data)
-                setCourse({ ...course, loading: false })
-                setImage(data.imageUri)
-                
+                setCourse({ ...course, loading: false });
+                setPreview(imagePreview);
+                let imageName = file.name;
+
+                if (imageName.length >= 10) {
+                    imageName = imageName.slice(0, 10) + "..."
+                }
+                setUploadButtonText(imageName);
+                setImage(data.imageUri);
+
+
             } catch (error) {
                 console.log(error)
                 setCourse({ ...course, loading: false })
@@ -51,6 +61,24 @@ const CourseCreate = () => {
     }
     const handleSubmit = (e) => {
         e.preventDefault();
+    }
+
+    const handleImageRemove = async () => {
+        if (course.loading) {
+            return;
+        }
+        try {
+            const { data } = await axios.post("/api/image/image-preview/delete", {
+                blobName: image
+            })
+            setPreview("");
+            setImage("");
+        } catch (error) {
+            console.log(error);
+
+            toast("Ipage uplaoed has failed try later on!")
+        }
+
     }
     return (<>
         <InstructorRoute>
@@ -64,8 +92,9 @@ const CourseCreate = () => {
                 preview={preview}
                 setPreview={setPreview}
                 uploadButtonText={uploadButtonText}
+                handleImageRemove={handleImageRemove}
             ></CourseCreationFrom>
-          {image &&  <img src={`https://basicstorage1414.blob.core.windows.net/epimages/${image}`} alt="dd"/>} 
+            {image && <img src={`https://basicstorage1414.blob.core.windows.net/epimages/${image}`} alt="dd" />}
         </InstructorRoute>
     </>)
 

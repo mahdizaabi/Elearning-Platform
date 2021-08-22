@@ -8,9 +8,6 @@ import { Context } from "../../context"
 // information oe the frontEnd
 const StripeCallback = () => {
     const { state: { user }, dispatch } = useContext(Context);
-
-
-
     useEffect(() => {
         if (user) {
             const response = axios.post('/api/get-account-status', { name: "mahdi" }).then(res => {

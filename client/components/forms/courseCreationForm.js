@@ -1,13 +1,13 @@
 import { useState } from "react"
-import { Button, Select } from 'antd'
+import { Badge, Button, Select } from 'antd'
 import Avatar from "antd/lib/avatar/avatar";
 const { option } = Select;
 
 
 
 const CourseCreationFrom = ({
-                            handleSubmit, handleImage, handleChange, course,
-                            setCourse, preview, setPreview, uploadButtonText}) => {
+    handleSubmit, handleImage, handleChange, course,
+    setCourse, preview, setPreview, uploadButtonText, handleImageRemove }) => {
     const childrens = () => {
         const options = []
         for (let i = 9.99; i <= 99.9; i++) {
@@ -52,7 +52,6 @@ const CourseCreationFrom = ({
                 </div>
 
                 {course.paid && <div className="col-md-2 offset-md-1">
-
                     <div className="form-group">
                         <Select
                             name="prices_array"
@@ -68,7 +67,6 @@ const CourseCreationFrom = ({
                 </div>}
             </div>
 
-
             <div className="form-group mt-3 mt-3">
                 <input type="text" name="category" className="form-control"
                     placeholder="category"
@@ -76,17 +74,13 @@ const CourseCreationFrom = ({
                     onChange={handleChange} id="course_category" />
             </div>
 
-
-
             <div className="form-row mt-3 mt-3">
                 <div className="row d-flex align-content-center justify-content-start">
                     <div className="form-group col-md-2 col-5 mt-3">
                         <label style={{ width: "100%" }} className="btn btn-outline-secondary btn-block text-left">
                             {course.loading && !uploadButtonText ? 'Uploading' :
-                            !course.loading && !uploadButtonText ? "image Upload" : uploadButtonText}
-                    
+                                !course.loading && !uploadButtonText ? "image Upload" : uploadButtonText}
                             <input
-
                                 type="file"
                                 name="image"
                                 onChange={handleImage}
@@ -95,14 +89,27 @@ const CourseCreationFrom = ({
                             />
                         </label>
                     </div>
-                    {preview && (
+                    {/*preview && (
                         <div className="col-md-2 col-1 mt-3">
                             <Avatar width={200} src={preview}></Avatar>
                         </div>
-                    )}
+                   )*/}
+
+                    {preview &&
+                        <div className="col-md-2 col-1 mt-3">
+                            <Badge
+                              className="pointer"
+                                count="X"
+                                onClick={handleImageRemove}
+                            >
+                                <Avatar width={200} src={preview} />
+                            </Badge>
+                        </div>
+                    }
+
+
+
                 </div>
-
-
             </div>
 
             <div className="row  mt-3 mt-3">
