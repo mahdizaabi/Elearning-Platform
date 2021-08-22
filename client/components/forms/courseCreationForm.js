@@ -5,9 +5,9 @@ const { option } = Select;
 
 
 
-const CourseCreationFrom = ({ handleSubmit, handleImage, handleChange, course, setCourse, preview, setPreview }) => {
-
-
+const CourseCreationFrom = ({
+                            handleSubmit, handleImage, handleChange, course,
+                            setCourse, preview, setPreview, uploadButtonText}) => {
     const childrens = () => {
         const options = []
         for (let i = 9.99; i <= 99.9; i++) {
@@ -15,8 +15,6 @@ const CourseCreationFrom = ({ handleSubmit, handleImage, handleChange, course, s
         }
         return options;
     }
-
-
     /**********/
 
     return (<div className="pt-3 pb-3">
@@ -83,8 +81,10 @@ const CourseCreationFrom = ({ handleSubmit, handleImage, handleChange, course, s
             <div className="form-row mt-3 mt-3">
                 <div className="row d-flex align-content-center justify-content-start">
                     <div className="form-group col-md-2 col-5 mt-3">
-                        <label style={{width: "100%"}} className="btn btn-outline-secondary btn-block text-left">
-                            {course.loading ? 'Uploading' : "image Upload"}
+                        <label style={{ width: "100%" }} className="btn btn-outline-secondary btn-block text-left">
+                            {course.loading && !uploadButtonText ? 'Uploading' :
+                            !course.loading && !uploadButtonText ? "image Upload" : uploadButtonText}
+                    
                             <input
 
                                 type="file"
