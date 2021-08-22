@@ -5,7 +5,7 @@ import { register, login, logout, currentUser, forgotPassword, resetPassword } f
 import { uploadImage } from '../controllers/course';
 import { currentInstructor, getStripeAccountStatusTest, makeInstructor } from '../controllers/InstructorController';
 import { requireSignin } from "../middlewares"
-
+import {imagePreviewDelete} from '../controllers/imageController'
 
 router.post("/register", register);
 router.post("/login", login);
@@ -21,5 +21,7 @@ router.get("/current-instructor", requireSignin, currentInstructor);
 
 router.post('/course/upload-image', uploadImage)
 
+
+router.post('/image/image-preview/delete', imagePreviewDelete)
 
 module.exports = router;

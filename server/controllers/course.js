@@ -1,4 +1,4 @@
-import createBlobAndAploadFile from "../utils/Azure_blob";
+import {createBlobAndAploadFile} from "../utils/Azure_blob";
 
 export const uploadImage = async (req, res) => {
     const { image } = req.body;
