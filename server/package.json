@@ -19,6 +19,7 @@
         "dotenv": "^10.0.0",
         "esm": "^3.2.25",
         "express": "^4.17.1",
+        "express-formidable": "^1.2.0",
         "express-jwt": "^6.0.0",
         "jsonwebtoken": "^8.5.1",
         "mailgun-js": "^0.22.0",
@@ -27,6 +28,8 @@
         "nanoid": "^3.1.23",
         "nodemon": "^2.0.12",
         "query-string": "^7.0.1",
+        "react-markdown": "^7.0.0",
+        "slugify": "^1.6.0",
         "stripe": "^8.169.0"
     }
 }

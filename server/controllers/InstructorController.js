@@ -1,6 +1,7 @@
 import User from "../models/user";
 import queryString from "query-string";
 import { UnauthorizedError } from "express-jwt";
+import courseModel from "../models/course";
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET)
 export const makeInstructor = async (req, res) => {
@@ -93,8 +94,6 @@ THIS ROUTE CHECK:
 1- SESSIONTOKEN IS VALID
 2- USER EXIST
 3- USER HAS INSTRUCTOR Access
-
-
 */
 
 export const currentInstructor = async (req, res) => {
@@ -108,5 +107,23 @@ export const currentInstructor = async (req, res) => {
         console.log(error)
         return json.status(400).send("unothorized or user not found")
     }
+}
+
+
+
+export const getInstructorCourses = async (req, res) => {
+    if (!req.user._id) {
+        return res.status(400).json("unothorized")
+    }
+
+    try {
+        const instructorCourses = await courseModel.find({
+            instructor: req.user._id
+        }).sort({ createdAt: -1 }).exec();
+        return res.json(instructorCourses);
+    } catch(error) {
+        console.log(error)
+    }
+
 }
 
