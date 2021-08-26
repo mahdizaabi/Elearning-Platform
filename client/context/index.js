@@ -25,7 +25,6 @@ const rootReducer = (state, action) => {
 // context provider
 const Provider = ({ children }) => {
     const [state, dispatch] = useReducer(rootReducer, intialState);
-        console.log("i wooooork");
     // router
     const router = useRouter();
 

@@ -23,7 +23,6 @@ const InstructorRoute = ({ children }) => {
 
     useEffect(() => {
         const fetchConstructor = async () => {
-            console.log('use effect is workinnnnnnng')
             try {
                 const { data } = await axios.get('/api/current-instructor');
                 if (data.ok) {

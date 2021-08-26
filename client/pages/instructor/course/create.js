@@ -5,7 +5,9 @@ import Resizer from 'react-image-file-resizer';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import deleteBlob from '../../../utils/Azure_delete_blob'
+import { useRouter } from 'next/router';
 const CourseCreate = () => {
+    const router = useRouter();
 
     const [preview, setPreview] = useState("");
     const [uploadButtonText, setUploadButtonText] = useState("");
@@ -49,8 +51,6 @@ const CourseCreate = () => {
                 }
                 setUploadButtonText(imageName);
                 setImage(data.imageUri);
-
-
             } catch (error) {
                 console.log(error)
                 setCourse({ ...course, loading: false })
@@ -59,8 +59,19 @@ const CourseCreate = () => {
         })
 
     }
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        const response = await axios.post("/api/course", {
+            course: {
+                ...course, image: {
+                    imageUrl: `https://basicstorage1414.blob.core.windows.net/epimages/${image}`,
+                    blobName: image
+                }
+            }
+        })
+
+        router.push('/');
+        console.log(response)
     }
 
     const handleImageRemove = async () => {

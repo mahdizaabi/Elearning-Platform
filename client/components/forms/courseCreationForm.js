@@ -19,7 +19,7 @@ const CourseCreationFrom = ({
 
     return (<div className="pt-3 pb-3">
         <form onSubmit={handleSubmit}>
-            <div className="form-group mt-3 mt-3">
+            <div className="form-group m  t-3 mt-3">
                 <input type="text" name="name" className="form-control"
                     placeholder="Name of the course"
                     value={course.name}
@@ -35,7 +35,6 @@ const CourseCreationFrom = ({
                     placeholder="Course description"
                 ></textarea>
             </div>
-
             <div className="form-row d-flex flex-row mt-3 mt-3">
                 <div className="col-md-3">
                     <div className="form-group">
@@ -77,7 +76,8 @@ const CourseCreationFrom = ({
             <div className="form-row mt-3 mt-3">
                 <div className="row d-flex align-content-center justify-content-start">
                     <div className="form-group col-md-2 col-5 mt-3">
-                        <label style={{ width: "100%" }} className="btn btn-outline-secondary btn-block text-left">
+                        <label style={{ width: "100%" }}
+                        className="btn btn-outline-secondary btn-block text-left">
                             {course.loading && !uploadButtonText ? 'Uploading' :
                                 !course.loading && !uploadButtonText ? "image Upload" : uploadButtonText}
                             <input
@@ -106,12 +106,8 @@ const CourseCreationFrom = ({
                             </Badge>
                         </div>
                     }
-
-
-
                 </div>
             </div>
-
             <div className="row  mt-3 mt-3">
                 <div className="col">
                     <Button

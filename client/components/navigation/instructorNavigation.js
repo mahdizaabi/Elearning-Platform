@@ -9,8 +9,6 @@ const InstructorNavigation = () => {
     }, [process.browser && window.location.pathname])
 
 
-
-
     return (
         <div className="nav flex-column nav-pills">
 
