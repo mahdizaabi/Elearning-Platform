@@ -48,7 +48,7 @@ export async function deleteBlob(blobName, containerName) {
 
 
 export async function createBlobAndAploadVideo(datax) {
-    const blobName = 'vid_' + uuidv1();
+    const blobName = 'vid_' + uuidv1() + '.mp4'
     try {
         const containerName = "evideos"
         const containerClient = blobServiceClient.getContainerClient(containerName);

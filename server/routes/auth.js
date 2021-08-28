@@ -8,7 +8,9 @@ import {
     getCourseFromSlug,
     addLessonToCourse,
     editCourse,
-    deleteLesson
+    deleteLesson,
+    
+    updateLesson
 } from '../controllers/course';
 import formidable from "express-formidable"
 
@@ -58,4 +60,5 @@ router.get("/course/video/remove/:slug/:blobName", requireSignin, isInstructor, 
 
 router.post("/course/lesson/addlesson/:slug", requireSignin, isInstructor, darfDeleteUndUpload, addLessonToCourse)
 
+router.put("/course/lesson/update/:slug/:lessonId", requireSignin, isInstructor, darfDeleteUndUpload, updateLesson)
 module.exports = router;

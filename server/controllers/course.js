@@ -1,5 +1,6 @@
 import { createBlobAndAploadFile } from "../utils/Azure_blob";
 import courseModel from '../models/course';
+import { query } from "express";
 
 var slugify = require('slugify')
 
@@ -101,4 +102,28 @@ export const deleteLesson = async (req, res) => {
         console.log(error)
         res.status(500).json("lesson delete failed")
     }
+}
+
+export const updateLesson = async (req, res) => {
+    const { slug, lessonId } = req.params;
+
+    try {
+        const updatedCourse = await courseModel.updateOne(
+            { "lessons._id": lessonId },
+            {
+                $set: {
+                    "lessons.$.title": req.body.title,
+                    "lessons.$.content": req.body.content,
+                    "lessons.$.video": req.body.video,
+                    "lessons.$.free_preview": req.body.free_preview
+                }
+            },
+            { new: true }
+        ).exec();
+        return res.json({ ok: true })
+    } catch (error) {
+        console.log(error)
+        return res.status(400).json("update lesson failed")
+    }
+
 }
