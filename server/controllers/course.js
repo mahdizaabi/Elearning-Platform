@@ -127,3 +127,31 @@ export const updateLesson = async (req, res) => {
     }
 
 }
+
+
+export const publishCourse = async (req, res) => {
+    const { slug, courseId } = req.params;
+    try {
+        const updatedCourse = await courseModel.findOneAndUpdate({ slug: slug },
+            { published: true },
+
+            { new: true }).exec();
+            return res.json(updatedCourse);
+    } catch (error) { console.log(error) }
+    return res.status(500).json("publishing failed")
+}
+
+export const unPublishCourse = async (req, res) => {
+    const { slug, courseId } = req.params;
+    try {
+        const updatedCourse = await courseModel.findOneAndUpdate({ slug: slug },
+            { published: false },
+            { new: true }).exec();
+            return res.json(updatedCourse);
+    } catch (error) { 
+        
+        console.log(error)
+        return res.status(500).json("publishing failed")
+    }
+   
+}
