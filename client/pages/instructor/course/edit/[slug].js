@@ -8,11 +8,22 @@ import CourseCreate from '../create';
 import { Avatar, Button, Tooltip, Modal, List } from "antd";
 import Item from "antd/lib/list/Item";
 import { DeleteOutlined } from "@ant-design/icons";
+import UpdateLessonFormx from "../../../../components/forms/updateLessonForm";
+import { toast } from "react-toastify";
 const Edit = () => {
 
     const router = useRouter()
     const { slug } = router.query;
     const [lessons, setLessons] = useState([]);
+
+    const [visible, setVisible] = useState(false)
+    const [currentClickesLesson, setCurrentClickedLesson] = useState({})
+
+    const [uploadVideoButtonText, setUploadVideoButtonText] = useState("upload video")
+    const [progress, setProgress] = useState(0);
+    const [uploading, setUploading] = useState(false);
+    const [uploadProgress, setUploadProgress] = useState(0);
+    const [course, setCourse] = useState({})
     useEffect(() => {
         const fetchCourse = async () => {
             const response = await axios.get(`/api/course/${slug}`);
@@ -24,7 +35,6 @@ const Edit = () => {
         fetchCourse();
     }, [slug])
 
-    console.log("rendeeeeeeeeeeer")
 
     const handleDrag = (e, index) => {
         e.dataTransfer.setData('itemIndex', index);
@@ -46,9 +56,65 @@ const Edit = () => {
 
         const filtredLessons = lessons.filter((item, indexx) => index !== indexx)
         setLessons(filtredLessons);
-        let lessonId= item._id;
+        let lessonId = item._id;
         const response = await axios.delete(`/api/course/lesson/delete/${slug}/${lessonId}`);
 
+    }
+
+
+    const handleVideo = async (e) => {
+        if (currentClickesLesson.video && currentClickesLesson.video.videoUrl) {
+            const blobName = currentClickesLesson.video.videoUrl.split("/evideos/")[1].split(".mp4")[0];
+            console.log(blobName);
+            try {
+                setUploading(true);
+                const deleteVideoResponse = await axios.get(`/api/course/video/remove/${slug}/${blobName}`);
+                setCurrentClickedLesson({ ...currentClickesLesson, video: { videoUrl: "" } });
+                setUploading(false);
+            } catch (error) {
+                console.log(error)
+                setUploading(false)
+                toast("video removing failed :( ");
+            }
+        }
+
+        const file = e.target.files[0]
+        setUploadVideoButtonText(file.name);
+        setUploading(true);
+        const videoData = new FormData();
+        videoData.append("video", file);
+
+        const videoResponseData = await axios.post("/api/course/video/upload", videoData, {
+            onUploadProgress: (e) => {
+                setUploadProgress(Math.round(100 * e.loaded) / e.total)
+            }
+        })
+
+        setCurrentClickedLesson({ ...currentClickesLesson, video: videoResponseData.data })
+        setUploading(false)
+    }
+    const handleUpdateLesson = async (e) => {
+        e.preventDefault();
+
+        try {
+            const { data } = await axios
+                .put(`/api/course/lesson/update/${slug}/${currentClickesLesson._id}`, currentClickesLesson);
+            setCurrentClickedLesson(data);
+            setUploadVideoButtonText("Upload Video");
+            setVisible("Lesson Updated");
+            setCourse(data);
+            if (data.ok) {
+               
+                const index = lessons.findIndex((el) => el._id === currentClickesLesson._id);
+                lessons[index] = currentClickesLesson;
+
+                setLessons([...lessons])
+                console.log(lessons)
+            }
+
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     return (
@@ -56,6 +122,8 @@ const Edit = () => {
             <CourseCreate
                 submitUrl={`/api/course/edit/${slug}`}
             />
+
+
             <div className="row d-flex justify-content-center">
                 <div className="col-8 p-3">
                     <hr />
@@ -74,6 +142,10 @@ const Edit = () => {
                             onDrop={event => handleDrop(event, index)}
                         >
                             <Item.Meta
+                                onClick={() => {
+                                    setVisible(true);
+                                    setCurrentClickedLesson(item);
+                                }}
                                 avatar={<Avatar>{index + 1}</Avatar>}
                                 title={item.title}
                             >
@@ -86,8 +158,26 @@ const Edit = () => {
                         }
                     ></List>
                 </div>
-
             </div>
+
+            <Modal
+                title="update lesson"
+                visible={visible}
+                onCancel={() => setVisible(false)}
+                footer={null}
+
+            >
+                <UpdateLessonFormx
+                    currentItem={currentClickesLesson}
+                    setCurrentItem={setCurrentClickedLesson}
+                    handleUpdateLesson={handleUpdateLesson}
+                    handleVideo={handleVideo}
+                    uploadVideoButtonText={uploadVideoButtonText}
+                    progress={progress}
+                    uploading={uploading}
+                />
+                {JSON.stringify(currentClickesLesson, null, 4)}
+            </Modal>
         </div>
 
     )
