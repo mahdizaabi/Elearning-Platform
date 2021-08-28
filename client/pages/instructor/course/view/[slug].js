@@ -3,17 +3,13 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import InstructorRoute from "../../../../components/routes/InstructorRoute";
 import { Avatar, Button, Tooltip, Modal, List } from "antd";
-import { CheckOutlined, EditOutlined, UploadOutlined } from "@ant-design/icons";
+import { CheckOutlined, CloseOutlined, EditOutlined, QuestionOutlined, UploadOutlined } from "@ant-design/icons";
 import AddLessonForm from "../../../../components/forms/AddLessonForm";
 import { toast } from "react-toastify";
 import Item from "antd/lib/list/Item";
 import Link from "next/link";
-
-
-
 /* Single course view  */
 const CourseView = () => {
-
     const [fetchedCouse, setFetchedCourse] = useState({});
     const [lessonValues, setLessonValues] = useState({
         title: "",
@@ -28,8 +24,6 @@ const CourseView = () => {
 
     /*  course name */
     const { slug } = router.query;
-
-
     useEffect(() => {
         const fetchCourse = async () => {
             const response = await axios.get(`/api/course/${slug}`);
@@ -56,13 +50,11 @@ const CourseView = () => {
             toast(error.message)
         }
     }
-
     const handelVideo = async (e) => {
         try {
             let videoFile = e.target.files[0];
             setVideoTitel(videoFile.name);
             setUploading(true);
-
             const videoData = new FormData();
             videoData.append('video', videoFile);
             const videoResponseData = await axios.post("/api/course/video/upload", videoData, {
@@ -70,7 +62,6 @@ const CourseView = () => {
                     setUploadProgress(Math.round(100 * e.loaded) / e.total)
                 }
             })
-
             setUploading(false);
             setLessonValues({ ...lessonValues, video: videoResponseData.data });
             // setFetchedCourse(data)
@@ -80,9 +71,7 @@ const CourseView = () => {
             setUploading(false);
             toast("lesson adding has failed")
         }
-
     }
-
     /*    Delete video from Azure !
     */
     const handleVideoRemove = async () => {
@@ -100,7 +89,30 @@ const CourseView = () => {
         }
     }
 
+    const handlePublish = async (e, courseId) => {
 
+        try {
+            const { data } = await axios.put(`/api/course/publish/${slug}/${courseId}`)
+            setFetchedCourse({ ...fetchedCouse, published: true })
+
+            console.log(data)
+        } catch (error) {
+            console.log(error)
+            toast(`publish has failed because this error: ${error.message}`)
+        }
+    }
+
+
+    const handleUnpublish = async (e, courseId) => {
+
+        try {
+            const { data } = await axios.put(`/api/course/unpublish/${slug}/${courseId}`)
+            setFetchedCourse({ ...fetchedCouse, published: false })
+        } catch (error) {
+            console.log(error)
+            toast(`unpublish has failed because this error: ${error.message}`)
+        }
+    }
     return (
         <InstructorRoute>
             <div className="container-fluid pt-3">
@@ -130,24 +142,41 @@ const CourseView = () => {
                                 </div>
                             </div>
                             <div className="course-control d-flex">
-                                <div className="control-left" onClick={()=>router.push(`/instructor/course/edit/${slug}`)} style={{ paddingTop: "6px" }}>
-                                            <Tooltip
-                                                title="Edit"
-                                                className="ml-4">
-                                                <EditOutlined className="h5 pointer text-warning "></EditOutlined>
-                                            </Tooltip>
+                                <div className="control-left" onClick={() => router.push(`/instructor/course/edit/${slug}`)} style={{ paddingTop: "6px" }}>
+                                    <Tooltip
+                                        title="Edit"
+                                        className="ml-4">
+                                        <EditOutlined className="h5 pointer text-warning "></EditOutlined>
+                                    </Tooltip>
 
                                 </div>
                                 <div className="control-right" style={{ marginLeft: "19px", paddingTop: "6px" }}>
-                                    <Tooltip
-                                        title="Publish"
-                                    >
-                                        <CheckOutlined className="h5 pointer text-danger ml-4"></CheckOutlined>
-                                    </Tooltip>
+                                    {fetchedCouse.lessons && fetchedCouse.lessons.length < 5 ?
+                                        <Tooltip
+                                            title='Min 5 lessons required to publish'
+                                        >
+                                            <QuestionOutlined
+                                                className="h5 pointer text-danger"
+                                            ></QuestionOutlined>
+
+                                        </Tooltip> : fetchedCouse.published ?
+                                            <Tooltip
+                                                onClick={(event) => handleUnpublish(event, fetchedCouse._id)}
+                                                title="unpublish"
+                                                className="h5 pointer text-danger"
+
+                                            >   <CloseOutlined />   </Tooltip> :
+
+                                            <Tooltip
+                                                onClick={(event) => handlePublish(event, fetchedCouse._id)}
+                                                title="Publish">
+
+                                                <CheckOutlined className="h5 pointer text-success"></CheckOutlined>
+                                            </Tooltip>
+                                    }
                                 </div>
                             </div>
                         </div>
-
                         {/*  Course description */}
                         <div className="description-box pl-5">
                             <p style={{ marginLeft: "12px" }}>
@@ -206,12 +235,8 @@ const CourseView = () => {
                                 ></List>
                             </div>
                         </div>
-
-
                     </>
                 }
-
-
             </div>
         </InstructorRoute>
     )
