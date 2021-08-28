@@ -9,8 +9,9 @@ import {
     addLessonToCourse,
     editCourse,
     deleteLesson,
-    
-    updateLesson
+    updateLesson,
+    publishCourse,
+    unPublishCourse
 } from '../controllers/course';
 import formidable from "express-formidable"
 
@@ -23,7 +24,7 @@ import {
 
 import { uploadVideo, deleteVideo } from '../controllers/videoController'
 
-import { isInstructor, requireSignin,darfDeleteUndUpload } from "../middlewares"
+import { isInstructor, requireSignin, darfDeleteUndUpload } from "../middlewares"
 import { imagePreviewDelete } from '../controllers/imageController'
 
 router.post("/register", register);
@@ -61,4 +62,8 @@ router.get("/course/video/remove/:slug/:blobName", requireSignin, isInstructor, 
 router.post("/course/lesson/addlesson/:slug", requireSignin, isInstructor, darfDeleteUndUpload, addLessonToCourse)
 
 router.put("/course/lesson/update/:slug/:lessonId", requireSignin, isInstructor, darfDeleteUndUpload, updateLesson)
+
+router.put("/course/unpublish/:slug/:courseId", requireSignin, isInstructor, darfDeleteUndUpload, unPublishCourse)
+router.put("/course/publish/:slug/:courseId", requireSignin, isInstructor,darfDeleteUndUpload, publishCourse)
+
 module.exports = router;
