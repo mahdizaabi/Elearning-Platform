@@ -2,11 +2,16 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import InstructorRoute from "../../../../components/routes/InstructorRoute";
-import { Avatar, Button, Tooltip, Modal } from "antd";
+import { Avatar, Button, Tooltip, Modal, List } from "antd";
 import { CheckOutlined, EditOutlined, UploadOutlined } from "@ant-design/icons";
 import AddLessonForm from "../../../../components/forms/AddLessonForm";
 import { toast } from "react-toastify";
+import Item from "antd/lib/list/Item";
+import Link from "next/link";
 
+
+
+/* Single course view  */
 const CourseView = () => {
 
     const [fetchedCouse, setFetchedCourse] = useState({});
@@ -24,13 +29,32 @@ const CourseView = () => {
     /*  course name */
     const { slug } = router.query;
 
-    /*  form submission    */
-    const handleAddLesson = (e) => {
-        e.preventDefault();
-        console.log("handlecreatelesson")
-        console.log(lessonValues)
-        setUploading(true);
 
+    useEffect(() => {
+        const fetchCourse = async () => {
+            const response = await axios.get(`/api/course/${slug}`);
+            setFetchedCourse(response.data);
+        }
+        fetchCourse();
+    }, [slug])
+    /*  form submission    */
+    const handleAddLesson = async (e) => {
+        e.preventDefault();
+        setUploading(true);
+        try {
+            const { data } = await axios
+                .post(`/api/course/lesson/addlesson/${slug}`, { ...lessonValues })
+            setUploading(false);
+
+            toast(`${lessonValues.title} lesson was succefully added`);
+            setFetchedCourse({ ...data });
+            setLessonValues({ content: "", title: "", video: {} });
+            setVisible(false)
+        } catch (error) {
+            console.log(error);
+            setUploading(false);
+            toast(error.message)
+        }
     }
 
     const handelVideo = async (e) => {
@@ -47,27 +71,27 @@ const CourseView = () => {
                 }
             })
 
-            console.log("video ressponse data: ", videoResponseData)
             setUploading(false);
             setLessonValues({ ...lessonValues, video: videoResponseData.data });
+            // setFetchedCourse(data)
+            setVideoTitel('upload video')
         } catch (error) {
             console.log(error.message)
             setUploading(false);
-            toast("Video uploading has failed")
+            toast("lesson adding has failed")
         }
 
     }
 
-
-    /*
-    Delete video from Azure !
+    /*    Delete video from Azure !
     */
     const handleVideoRemove = async () => {
         const blobName = lessonValues.video.videoUrl.split("/evideos/")[1].split(".mp4")[0];
         try {
             setUploading(true);
-            const deleteVideoResponse = await axios.get(`/api/course/video/remove/${blobName}`);
+            const deleteVideoResponse = await axios.get(`/api/course/video/remove/${slug}/${blobName}`);
             setLessonValues({ ...lessonValues, video: { videoUrl: "" } });
+            setVideoTitel("")
             setUploading(false);
         } catch (error) {
             console.log(error)
@@ -76,13 +100,7 @@ const CourseView = () => {
         }
     }
 
-    useEffect(() => {
-        const fetchCourse = async () => {
-            const response = await axios.get(`/api/course/${slug}`);
-            setFetchedCourse(response.data);
-        }
-        fetchCourse();
-    }, [slug])
+
     return (
         <InstructorRoute>
             <div className="container-fluid pt-3">
@@ -112,13 +130,13 @@ const CourseView = () => {
                                 </div>
                             </div>
                             <div className="course-control d-flex">
-                                <div className="control-left" style={{ paddingTop: "6px" }}>
-                                    <Tooltip
-                                        title="Edit"
-                                        className="ml-4"
-                                    >
-                                        <EditOutlined className="h5 pointer text-warning "></EditOutlined>
-                                    </Tooltip>
+                                <div className="control-left" onClick={()=>router.push(`/instructor/course/edit/${slug}`)} style={{ paddingTop: "6px" }}>
+                                            <Tooltip
+                                                title="Edit"
+                                                className="ml-4">
+                                                <EditOutlined className="h5 pointer text-warning "></EditOutlined>
+                                            </Tooltip>
+
                                 </div>
                                 <div className="control-right" style={{ marginLeft: "19px", paddingTop: "6px" }}>
                                     <Tooltip
@@ -169,9 +187,31 @@ const CourseView = () => {
                                     handleVideoRemove={handleVideoRemove}
                                 ></AddLessonForm>
                             </Modal>
+                            <div className="row pl-5">
+                                <div className="col  lesson-list">
+                                    <h4>{fetchedCouse.lessons?.length} lessons</h4>
+                                </div>
+                                <List
+                                    itemLayout="horizental"
+                                    dataSource={fetchedCouse?.lessons}
+                                    renderItem={(item, index) =>
+                                    (<Item>
+                                        <Item.Meta
+                                            avatar={<Avatar>{index + 1}</Avatar>}
+                                            title={item.title}
+                                        >
+                                        </Item.Meta>
+                                    </Item>)
+                                    }
+                                ></List>
+                            </div>
                         </div>
+
+
                     </>
                 }
+
+
             </div>
         </InstructorRoute>
     )

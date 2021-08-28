@@ -23,8 +23,8 @@ const myStyle = {marginTop: "-15px", fontSize: "10px"}
 
             <div className="row instructor_courses">
                 <div className="col">
-                    {courses && courses.map(course => (
-                        <div className="media d-flex align-items-center flex-row pb-3 pt-2">
+                    {courses && courses.map((course,index) => (
+                        <div key={index} className="media d-flex align-items-center flex-row pb-3 pt-2">
                             <div className="align-self-start">
                                 <Avatar
                                     src={course.image ? course.image.imageUrl : '/course.png'}
@@ -33,7 +33,7 @@ const myStyle = {marginTop: "-15px", fontSize: "10px"}
                             </div>
 
                             <div className="media-body pl-5">
-                                <siv className="row w-100">
+                                <div  className="row w-100">
                                     <div className="col pl-5">
                                         <Link
                                             href={`/instructor/course/view/${course.slug}`}
@@ -68,7 +68,7 @@ const myStyle = {marginTop: "-15px", fontSize: "10px"}
                                                 <CloseCircleOutlined className="pointer h5 text-warning"></CloseCircleOutlined>
                                             </div>)}
                                     </div>
-                                </siv>
+                                </div >
                             </div>
                         </div>
                     ))}

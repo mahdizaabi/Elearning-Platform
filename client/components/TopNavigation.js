@@ -92,7 +92,7 @@ const TopNavigation = () => {
                                 <a>Dashboard</a>
                             </Link>
                         </Item>
-                        <Item onClick={() => logout()}>
+                        <Item key="/loggout" onClick={() => logout()}>
                             <Link href="/">
                                 <a>Logout</a>
                             </Link>

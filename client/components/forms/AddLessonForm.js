@@ -14,7 +14,7 @@ const AddLessonForm = ({
     return <div className="container addLesson-formContainer pt-3">
         <form action="" encType="multipart/form-data" onSubmit={handleAddLesson}>
             <input type="text" name="lesson-title-input"
-                classNam="form-control square"
+                className="form-control square"
                 id="lesson-title-input"
                 autoFocus
                 required
@@ -81,7 +81,9 @@ const AddLessonForm = ({
                 shape="round"
                 disabled={lessonValues.content && lessonValues.title ? false : true}
             >
-                {uploading ? "uploading Lesson ..." : "Add Lesson"}
+                {uploading && lessonValues.video.videoUrl ? "uploading Lesson ..." :
+                uploading && !lessonValues.video.videoUrl ?
+                 "uploading video" : "add lesson"}
             </Button>
         </form>
 

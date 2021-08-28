@@ -1,13 +1,15 @@
 import InstructorRoute from '../../../components/routes/InstructorRoute'
 import CourseCreationFrom from '../../../components/forms/courseCreationForm'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Resizer from 'react-image-file-resizer';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import deleteBlob from '../../../utils/Azure_delete_blob'
 import { useRouter } from 'next/router';
-const CourseCreate = () => {
+import { ControlOutlined } from '@ant-design/icons';
+const CourseCreate = ({ submitUrl }) => {
     const router = useRouter();
+    const { slug } = router.query;
 
     const [preview, setPreview] = useState("");
     const [uploadButtonText, setUploadButtonText] = useState("");
@@ -22,6 +24,25 @@ const CourseCreate = () => {
         loading: false,
     })
 
+
+    ////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    ///////////////////////////////////////////////
+    useEffect(() => {
+        const fetchCourse = async () => {
+            const response = await axios.get(`/api/course/${slug}`);
+            if (response.data) {
+                console.log(response)
+                setCourse({ ...course, ...response.data });
+                setPreview(response.data.image.imageUrl)
+            }
+
+        }
+        fetchCourse();
+    }, [slug])
+    ////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////
     const handleChange = e => {
         setCourse({ ...course, [e.target.name]: e.target.value })
     }
@@ -60,8 +81,9 @@ const CourseCreate = () => {
 
     }
     const handleSubmit = async (e) => {
+        const url = submitUrl ? submitUrl : "/api/course"
         e.preventDefault();
-        const response = await axios.post("/api/course", {
+        const response = await axios.post(url, {
             course: {
                 ...course, image: {
                     imageUrl: `https://basicstorage1414.blob.core.windows.net/epimages/${image}`,
@@ -69,8 +91,7 @@ const CourseCreate = () => {
                 }
             }
         })
-
-        router.push('/');
+        router.push('/instructor');
         console.log(response)
     }
 
@@ -86,7 +107,6 @@ const CourseCreate = () => {
             setImage("");
         } catch (error) {
             console.log(error);
-
             toast("Ipage uplaoed has failed try later on!")
         }
 

@@ -16,7 +16,7 @@ const CourseCreationFrom = ({
         return options;
     }
     /**********/
-
+    //console.log("imaaage => ",course?.image?.imageUrl);
     return (<div className="pt-3 pb-3">
         <form onSubmit={handleSubmit}>
             <div className="form-group m  t-3 mt-3">
@@ -77,7 +77,7 @@ const CourseCreationFrom = ({
                 <div className="row d-flex align-content-center justify-content-start">
                     <div className="form-group col-md-2 col-5 mt-3">
                         <label style={{ width: "100%" }}
-                        className="btn btn-outline-secondary btn-block text-left">
+                            className="btn btn-outline-secondary btn-block text-left">
                             {course.loading && !uploadButtonText ? 'Uploading' :
                                 !course.loading && !uploadButtonText ? "image Upload" : uploadButtonText}
                             <input
@@ -98,7 +98,7 @@ const CourseCreationFrom = ({
                     {preview &&
                         <div className="col-md-2 col-1 mt-3">
                             <Badge
-                              className="pointer"
+                                className="pointer"
                                 count="X"
                                 onClick={handleImageRemove}
                             >
@@ -124,7 +124,7 @@ const CourseCreationFrom = ({
                 </div>
             </div>
         </form>
-        <pre>{JSON.stringify(course, null, 4)}</pre>
+        {/* <pre>{JSON.stringify(course, null, 4)}</pre> */}
     </div>)
 }
 
