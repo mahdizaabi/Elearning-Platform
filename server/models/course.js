@@ -18,8 +18,8 @@ const lessonSchema = new mongoose.Schema({
         type: {},
         minlength: 200,
     },
-    video_Link: {
-        type: String
+    video: {
+        type: {}
     },
     free_preview: {
         type: Boolean,

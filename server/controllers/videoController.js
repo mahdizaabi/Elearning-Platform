@@ -2,9 +2,6 @@ import { createBlobAndAploadVideo, deleteBlob } from '../utils/Azure_blob'
 import { readFileSync } from 'fs'
 export const uploadVideo = async (req, res) => {
 
-
-    console.log("req.files:", req.files)
-
     try {
         const response = await createBlobAndAploadVideo(readFileSync(req.files.video.path))
         return res.json({ videoUrl: `https://basicstorage1414.blob.core.windows.net/evideos/${response}.mp4` })
@@ -16,7 +13,8 @@ export const uploadVideo = async (req, res) => {
 
 export const deleteVideo = async (req, res) => {
     /*  course name */
-    const { blobName } = req.params;
+    const { blobName, slug } = req.params;
+    console.log(slug)
     try {
         const response = await deleteBlob(blobName, 'evideos');
         return res.status(203).json("delete was successful!")

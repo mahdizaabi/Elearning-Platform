@@ -1,5 +1,6 @@
 import { createBlobAndAploadFile } from "../utils/Azure_blob";
 import courseModel from '../models/course';
+
 var slugify = require('slugify')
 
 export const uploadImage = async (req, res) => {
@@ -53,5 +54,51 @@ export const getCourseFromSlug = async (req, res) => {
     } catch (error) {
         console.log(error);
         return res.json(error)
+    }
+}
+
+export const addLessonToCourse = async (req, res) => {
+    const { slug } = req.params;
+    const { title, video, content } = req.body
+    try {
+        const updatedCourse = await courseModel.findOneAndUpdate({ slug: slug },
+            {
+                $push: { lessons: { title, content, video, slug: slugify(title) } }
+            }, { new: true }).populate("instructor", "_id name").exec();
+        console.log(updatedCourse)
+        return res.json(updatedCourse)
+    } catch (error) {
+        console.log(error)
+        return res.status(400).send('add lesson failed')
+    }
+}
+
+
+export const editCourse = async (req, res) => {
+    const { slug } = req.params;
+    console.log("request body ==>", req.body)
+    try {
+        const updatedCourse = await courseModel.findOneAndUpdate({ slug: slug },
+            { ...req.body.course }, { new: true }
+        ).exec()
+        console.log("updated course ===>", updatedCourse)
+        return res.json(updatedCourse);
+    } catch (error) {
+        console.log(error);
+        return res.status(503).json("course update failed")
+    }
+}
+
+export const deleteLesson = async (req, res) => {
+
+    const { slug, lessonId } = req.params;
+
+    try {
+        const document = await courseModel.findOneAndUpdate({ slug: slug },
+            { $pull: { lessons: { _id: lessonId } } }).exec();
+        res.json({ "ok": true })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json("lesson delete failed")
     }
 }
