@@ -1816,3 +1816,31 @@ export const darfDeleteUndUpload = async (req, res, next) => {
         return res.status(500).json("unexpected problem has accured")
     }
 }
+
+
+export const checkIsEnrolled = async (req, res, next) => {
+    const { slug } = req.params;
+    console.log("SLUGGGGG===>",slug)
+    console.log("====>",req.user._id)
+    try {
+        const userCourses = await userModel.find({ '_id': req.user._id }).select('courses').exec();
+        //check if course is enrolles
+        const course = await courseModel.findOne({ slug: slug }).exec()
+        console.log("course not enrolled=>", course)
+        /*if(!course){
+            return res.status(403).json("resourse access forbidden!")
+        }*/
+        if (userCourses[0].courses.includes(course._id)) {
+            console.log('course is enrolled !')
+            req._course = course;
+            next()
+        }
+        else {
+            return res.status(403).json("access resource is forbidden")
+        }
+    } catch (error) {
+        console.log(error) 
+        return res.status(403).json("access resource is forbidden")
+    }
+
+}

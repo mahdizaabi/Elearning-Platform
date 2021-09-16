@@ -11,7 +11,12 @@ import {
     deleteLesson,
     updateLesson,
     publishCourse,
-    unPublishCourse
+    unPublishCourse,
+    getAllCourses,
+    checkEnrollement,
+    enrollFreeCourse,
+    getUserCourses,
+    getSingleEnrolledCourse,
 } from '../controllers/course';
 import formidable from "express-formidable"
 
@@ -24,7 +29,7 @@ import {
 
 import { uploadVideo, deleteVideo } from '../controllers/videoController'
 
-import { isInstructor, requireSignin, darfDeleteUndUpload } from "../middlewares"
+import { isInstructor, requireSignin, darfDeleteUndUpload,checkIsEnrolled } from "../middlewares"
 import { imagePreviewDelete } from '../controllers/imageController'
 
 router.post("/register", register);
@@ -49,7 +54,7 @@ router.post("/course", requireSignin, isInstructor, createCourse);
 router.get("/instructor/courses", requireSignin, isInstructor, getInstructorCourses);
 
 
-router.get("/course/:slug", requireSignin, isInstructor, getCourseFromSlug);
+router.get("/course/:slug", getCourseFromSlug);
 router.post("/course/edit/:slug", requireSignin, isInstructor, darfDeleteUndUpload, editCourse);
 
 router.post("/course/video/upload", requireSignin, isInstructor, formidable(), uploadVideo);
@@ -65,5 +70,10 @@ router.put("/course/lesson/update/:slug/:lessonId", requireSignin, isInstructor,
 
 router.put("/course/unpublish/:slug/:courseId", requireSignin, isInstructor, darfDeleteUndUpload, unPublishCourse)
 router.put("/course/publish/:slug/:courseId", requireSignin, isInstructor,darfDeleteUndUpload, publishCourse)
+router.get("/course/index/getallcourses", getAllCourses)
+router.get("/course/check-enrollement/:courseId", requireSignin, checkEnrollement)
+router.get("/course/enroll-freecourse/:courseId", requireSignin, enrollFreeCourse)
+router.get("/user/course/listall/", requireSignin, getUserCourses)
+router.get("/user/course/:slug/", requireSignin,checkIsEnrolled, getSingleEnrolledCourse)
 
 module.exports = router;

@@ -45,12 +45,9 @@ export const makeInstructor = async (req, res) => {
 export const getStripeAccountStatus = async (req, res) => {
     const { user } = req.body
 
-
     try {
         const user = await User.findById(req.user._id).exec();
         //make the call to stripe to get the updated information
-
-
         const account = await stripe.accounts.retrieve(user.stripe_account_id);
         if (!account.charges_enabled) {
             return res.status(401).send("Unauthorized")

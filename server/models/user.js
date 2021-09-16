@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { ObjectId } = mongoose.Schema;
 
 /* create pizza Modal for mongoDB*/
 const userSchema = new mongoose.Schema({
@@ -34,6 +35,9 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: ''
     },
+    courses: [ 
+        {type: ObjectId, ref: "Course"} 
+    ]
 }, { timestamps: true })
 
 

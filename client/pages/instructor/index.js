@@ -5,7 +5,7 @@ import Avatar from "antd/lib/avatar/avatar";
 import { Tooltip } from 'antd';
 import Link from 'next/link';
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
-
+import CourseCard from '../../components/cards/courseCard';
 const InstructorIndex = () => {
     const [courses, setCourses] = useState();
     useEffect(() => {
